@@ -52,8 +52,10 @@ def both_ends(s):
 # Hint: s.replace(stra, strb) returns a version of string s
 # where all instances of stra have been replaced by strb.
 def fix_start(s):
-  # +++your code here+++
-  return
+    first_char = s[0]
+    s = s[1:]
+    s_modified = first_char + s.replace(first_char, '*')
+    return s_modified
 
 
 # D. MixUp
