@@ -29,7 +29,15 @@ def last2(string):
 # Test it with the Lorem upsuj
 #"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 def occurences(text):
-  return
+    dicti = {}
+    words = text.split(" ")
+    for word in words:
+        for letter in word:
+            if letter in dicti:
+                dicti[letter] += 1
+            else:
+                dicti[letter] = 1
+    return dicti
 
 #Write a program that maps a list of words into a list of
 #integers representing the lengths of the correponding words.
