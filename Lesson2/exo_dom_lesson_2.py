@@ -18,7 +18,7 @@ from IPython.core.display import clear_output
 
 
 url = 'https://www.reuters.com/finance/stocks/financial-highlights/'
-pages = ['LVMH.PA', 'AIR.PA', 'DANO.PA', 'NKE.N', 'AAPL.OQ']
+pages = ['LVMH.PA', 'AIR.PA', 'DANO.PA']
 prix = []
 percentages = []
 quarters_mean =[]
@@ -101,7 +101,7 @@ for page in pages:
 # On crée un dataframe avec les informations que nous avons récupérés et on affiche notre dataframe
 
 import pandas as pd
-company = ['LVMH', 'Airbus', 'Danone', 'Nike', 'Apple']
+company = ['LVMH', 'Airbus', 'Danone']
 df = pd.DataFrame({'Company': company,
                    'Quarter mean': quarters_mean,
                    'Quarter high': quarters_high,
