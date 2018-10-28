@@ -1,7 +1,16 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[ ]:
+
+
 from requests import get
 from bs4 import BeautifulSoup
 import math
 import pandas as pd
+
+
+# In[ ]:
 
 
 def get_url(url):
@@ -11,12 +20,18 @@ def get_url(url):
     return(soup)
 
 
+# In[ ]:
+
+
 def get_links(soup):
     liste_annonce = []
     for annonce in soup.find_all('div', class_="adContainer"):
         for an in annonce.find_all('a'):
             liste_annonce.append(an['href'])
     return liste_annonce
+
+
+# In[ ]:
 
 
 def get_all_pages():
@@ -33,6 +48,9 @@ def get_all_pages():
     return liste
 
 
+# In[ ]:
+
+
 def flatten(liens):
     liste_lien = []
     for tableau in liens:
@@ -41,8 +59,14 @@ def flatten(liens):
     return liste_lien
 
 
+# In[ ]:
+
+
 def remove_duplicates(l):
     return list(set(l))
+
+
+# In[ ]:
 
 
 def get_info(urls):
@@ -66,7 +90,7 @@ def get_info(urls):
         kilometres.append(kilometre)
         vendeurs.append(vendeur)
         prices.append(prix)
-    dictionnaire = dictionnaire = {"modeles":modeles,
+    dictionnaire = {"modeles":modeles,
                     "telephones": telephones,
                     "annee":annees,
                     "kilometres":kilometres,
@@ -75,9 +99,87 @@ def get_info(urls):
     return dictionnaire
 
 
+# In[ ]:
+
+
+def get_liens_cote(soup):
+    liste_cote = []
+    for cote in soup.findAll('div', class_="listingResultLine"):
+        for an in cote.findAll('a'):
+            liste_cote.append(an['href'])
+    return liste_cote
+
+
+# In[ ]:
+
+
+def get_all_cote():
+    annees = list(range(2012, 2019))
+    liens = []
+    modeles = []
+    prix = []
+    annees2 = []
+    annee_modele = []
+    for annee in annees:
+        soup = get_url("https://www.lacentrale.fr/cote-voitures-renault-zoe--{}-.html".format(annee))
+        cote = get_liens_cote(soup)
+        liens.append(cote)
+    liens_f = flatten(liens)
+    for lien in liens_f:
+        url = "https://www.lacentrale.fr/{}".format(lien)
+        soup = get_url(url)
+        pri = soup.find('span', class_="jsRefinedQuot").text.strip()
+        modele = soup.find('span', class_="sizeC clear txtGrey7C sizeC").text.strip()
+        annee = lien[-9:-5]
+        modeles.append(modele)
+        prix.append(pri)
+        annees2.append(annee)
+    dictionnaire = {"modeles":modeles,
+                    "cote": prix,
+                    "annee" : annees2
+                   }
+    return dictionnaire
+
+
+# In[ ]:
+
+
 liens = get_all_pages()
 lien_flattened = flatten(liens)
 lien_f = remove_duplicates(lien_flattened)
-dictionnaire = get_info(lien_f)
-df = pd.DataFrame(dictionnaire)
-print(df)
+
+
+# In[ ]:
+
+
+informations = get_info(lien_f)
+df1 = pd.DataFrame(informations)
+
+
+# In[ ]:
+
+
+cotes = get_all_cote()
+df2 = pd.DataFrame(cotes)
+
+
+# In[ ]:
+
+
+df_final = pd.merge(df1, df2,  how='left', left_on=['modeles','annee'], right_on = ['modeles','annee'])
+df_final.prix = df_final.prix.str.extract(r'(\d* \d\d\d)')
+df_final.loc[df_final['prix'] > df_final['cote'], 'Good Deal'] = False
+df_final.loc[df_final['prix'] < df_final['cote'], 'Good Deal'] = True
+
+
+# In[ ]:
+
+
+df_final
+
+
+# In[ ]:
+
+
+
+
