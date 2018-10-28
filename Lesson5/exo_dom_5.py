@@ -1,16 +1,7 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
 from requests import get
 from bs4 import BeautifulSoup
 import math
 import pandas as pd
-
-
-# In[ ]:
 
 
 def get_url(url):
@@ -20,18 +11,12 @@ def get_url(url):
     return(soup)
 
 
-# In[ ]:
-
-
 def get_links(soup):
     liste_annonce = []
     for annonce in soup.find_all('div', class_="adContainer"):
         for an in annonce.find_all('a'):
             liste_annonce.append(an['href'])
     return liste_annonce
-
-
-# In[ ]:
 
 
 def get_all_pages():
@@ -48,9 +33,6 @@ def get_all_pages():
     return liste
 
 
-# In[ ]:
-
-
 def flatten(liens):
     liste_lien = []
     for tableau in liens:
@@ -59,14 +41,8 @@ def flatten(liens):
     return liste_lien
 
 
-# In[ ]:
-
-
 def remove_duplicates(l):
     return list(set(l))
-
-
-# In[ ]:
 
 
 def get_info(urls):
@@ -99,18 +75,12 @@ def get_info(urls):
     return dictionnaire
 
 
-# In[ ]:
-
-
 def get_liens_cote(soup):
     liste_cote = []
     for cote in soup.findAll('div', class_="listingResultLine"):
         for an in cote.findAll('a'):
             liste_cote.append(an['href'])
     return liste_cote
-
-
-# In[ ]:
 
 
 def get_all_cote():
@@ -141,45 +111,17 @@ def get_all_cote():
     return dictionnaire
 
 
-# In[ ]:
-
-
 liens = get_all_pages()
 lien_flattened = flatten(liens)
 lien_f = remove_duplicates(lien_flattened)
-
-
-# In[ ]:
-
-
 informations = get_info(lien_f)
 df1 = pd.DataFrame(informations)
-
-
-# In[ ]:
-
-
 cotes = get_all_cote()
 df2 = pd.DataFrame(cotes)
-
-
-# In[ ]:
-
 
 df_final = pd.merge(df1, df2,  how='left', left_on=['modeles','annee'], right_on = ['modeles','annee'])
 df_final.prix = df_final.prix.str.extract(r'(\d* \d\d\d)')
 df_final.loc[df_final['prix'] > df_final['cote'], 'Good Deal'] = False
 df_final.loc[df_final['prix'] < df_final['cote'], 'Good Deal'] = True
 
-
-# In[ ]:
-
-
-df_final
-
-
-# In[ ]:
-
-
-
-
+print(df_final)
